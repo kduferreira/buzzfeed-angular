@@ -14,7 +14,7 @@ export class QuizComponent implements OnInit {
   questionSelected:any
 
 
-  answeres:string[] = []
+  answers:string[] = []
   answerSelected: string = ''
 
 
@@ -43,18 +43,39 @@ export class QuizComponent implements OnInit {
   }
 
   buttonPress(value:string){
- this.answeres.push(value)
- console.log(this.answeres)
- console.log("teste")
+ this.answers.push(value)
+ this.anextStep()
+
+ console.log(this.answers)
+
   }
 
-  async nextStep(){
+   async anextStep(){
     this.questionsIndex+=1
 
     if(this.questionMaxIndex > this.questionsIndex){
       this.questionSelected = this.questions[this.questionsIndex]
     }else{
+      const finalAnswer:string = await this.checkResult(this.answers)
       this.finished = true
+      this.answerSelected = quiz_questions.results[finalAnswer as keyof
+      typeof quiz_questions.results ]
     }
   }
+
+  async checkResult(answers:string[]){
+    const result = answers.reduce((previous, current, i, arr) => {
+        if(
+arr.filter(item => item === previous).length >
+arr.filter(item => item === current).length
+        ){
+          return previous
+        }else{
+          return current
+        }
+    })
+    return result
+  }
+
+
 }
